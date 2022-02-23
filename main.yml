@@ -2,20 +2,20 @@
 - hosts: nexus
   become: yes
   roles:
-    - role: nexus-server
+    - role: ubuntu.nexus-server
 
     
 - hosts: sonarquebe
   become: yes
   roles:
-    - role: sonarquebe
+    - role: ubuntu.sonarquebe
 
 - hosts: tomcat
   become: yes
   roles:
-    - role: tomcat
+    - role: ubuntu.tomcat
 
 - hosts: tomcat
   become: yes
   roles:
-    - role: java-application
+    - role: ubuntu.java-application
