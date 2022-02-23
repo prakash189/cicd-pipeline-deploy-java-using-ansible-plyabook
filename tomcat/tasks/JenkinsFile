@@ -1,0 +1,30 @@
+pipeline {
+    agent any
+    tools
+    {
+       maven "M3"
+    }
+     stages {
+
+        stage('checkout') {
+          steps{
+
+              git branch: 'main', url: 'https://github.com/prakash189/hello-java.git'
+
+          }
+      }
+
+        stage('Ansible Deploy') {
+
+            steps {
+                
+                sh "ansible-playbook main.yml -i hosts"
+        
+            
+            }
+        }
+        }
+    
+    }
+
+

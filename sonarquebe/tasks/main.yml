@@ -1,2 +1,146 @@
 ---
-# tasks file for sonarquebe
+- hosts: sonar-quebe  # need to update the server name as using dynamic inventory
+
+  become: yes
+  become_method: sudo
+  remote_user: ubuntu
+  vars_files:
+    - vars/main.yml
+
+  handlers:
+    - include: handlers/main.yml
+
+
+  tasks:
+  - name: Update apt-get repo and cache
+    apt: update_cache=yes force_apt_get=yes cache_valid_time=3600
+      
+  - name: install JDK 11
+    apt:
+      name: openjdk-11-jdk
+      state: present    
+
+  - name: install ansible
+    apt:
+      name: ansible
+      state: present
+
+  - name: install python3
+    apt:
+      name: python3
+      state: present
+  - name: install php
+    apt:
+      name: php
+      state: present
+
+  - name: install pip3
+    apt:
+      name: python3-pip
+      state: present
+
+  - name: install lxml
+    pip:
+      name: lxml 
+
+  - name: install unzip
+    apt: 
+      name: unzip
+      state: present
+
+# Download the sonarqube packages from sonar community 
+  - name: download the sonarqube community
+    unarchive:
+      src: https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-9.1.0.47736.zip
+      dest: /home/ubuntu/
+      remote_src: yes
+  
+# copy sonarqube properties file which contains postgresql db details to remote server
+
+  - name: copy sonarqube properties file to remote system
+    copy:
+       src: sonar.properties
+       dest: /home/ubuntu/sonarqube-9.1.0.47736/conf
+       mode: 0755
+
+
+  - name: Change ownership for sonarquebe
+    file:
+      path: /home/ubuntu/sonarqube-9.1.0.47736
+      owner: ubuntu
+      group: ubuntu
+      mode: "u+rwx,g+rx,o=rx"
+      recurse: yes
+      state: directory
+
+# copy sonarqube service 
+
+  - name: Copy sonarqube service from local to remote
+    copy:
+       src: sonar.service
+       dest: /etc/systemd/system/
+       mode: 0755
+
+  - name: set mex memory to sonarqube
+    command: 'sysctl -w vm.max_map_count=524288'
+
+  - name: set mex file descriptor to sonarqube
+    command: 'sudo sysctl -w fs.file-max=131072'
+
+
+# Install posgtresql on remote server
+
+  - name:  install ansible postgresql dependancy packages
+    package:
+      pkg: python3-psycopg2
+      state: present
+  
+  - name: Ensure bash, OpenSSl, and libssl are the latest versions
+    apt:
+      name: "{{item}}"
+      update_cache: true 
+      state: latest
+    with_items: 
+      - bash
+      - openssl
+      - libssl-dev
+      - libssl-doc
+    
+  - name: Install PostgreSQL
+    apt: 
+      name: "{{item}}"
+      state: present
+      update_cache: true 
+    with_items:
+        - postgresql
+        - postgresql-contrib
+        - libpq-dev
+
+  - name: Ensure database is created
+    postgresql_db: 
+      name: "{{ db_name }}"
+      state: present
+    become: yes
+    become_user: postgres
+
+  - name: Ensure user has access to the database
+    postgresql_user: 
+      db: "{{ db_name }}"
+      name: "{{ db_user }}"
+      password: "{{ db_password }}"
+      priv: ALL
+      state: present
+    become: yes
+    become_user: postgres
+
+  - name: Ensure user does not have unnecessary privileges
+    postgresql_user: 
+      name: "{{ db_user }}"
+      role_attr_flags: NOSUPERUSER,NOCREATEDB
+      state: present
+    become: yes
+    become_user: postgres
+  
+
+
+  

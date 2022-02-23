@@ -1,2 +1,7 @@
 ---
-# handlers file for nexus-server
+  - name: start the nexus service
+    systemd:
+      name: nexus
+      state: started
+      enabled: true
+      daemon_reload: true

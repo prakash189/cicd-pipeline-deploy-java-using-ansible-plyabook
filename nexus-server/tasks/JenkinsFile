@@ -1,0 +1,23 @@
+#!groovy
+pipeline {
+  agent any
+  stages {
+        stage('checkout') {
+            steps {
+
+                git branch: 'main', url: 'https://github.com/prakash189/ansible-playbook-install-packages'
+
+                  }
+              }
+        
+
+        stage('run ansible playbook-install-packages such as nexus server') 
+            {
+            steps {
+
+                sh "ansible-playbook main.yml -i hosts"
+            }
+        }
+
+    }
+}

@@ -1,0 +1,21 @@
+---
+- hosts: nexus
+  become: yes
+  roles:
+    - role: nexus-server
+
+    
+- hosts: sonarquebe
+  become: yes
+  roles:
+    - role: sonarquebe
+
+- hosts: tomcat
+  become: yes
+  roles:
+    - role: tomcat
+
+- hosts: tomcat
+  become: yes
+  roles:
+    - role: java-application

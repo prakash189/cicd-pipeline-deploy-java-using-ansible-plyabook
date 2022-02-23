@@ -1,2 +1,13 @@
 ---
-# handlers file for sonarquebe
+  - name: Start and enable sonar service
+    systemd:
+      name: sonar
+      state: restarted
+      enabled: true
+      daemon_reload: true
+  
+  - name: Ensure the PostgreSQL service is running
+    service: 
+      name: postgresql 
+      state: started 
+      enabled: yes

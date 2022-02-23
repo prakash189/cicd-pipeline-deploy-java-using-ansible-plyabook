@@ -1,2 +1,4 @@
 ---
-# vars file for sonarquebe
+db_user: sonar1
+db_name: sonarkube1
+db_password: password1
