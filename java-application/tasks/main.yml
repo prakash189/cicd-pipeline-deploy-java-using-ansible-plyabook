@@ -1,12 +1,4 @@
 ---
-- hosts: tomcat
-  gather_facts: false
-  become: yes
-  become_method: sudo
-  remote_user: ubuntu
-
-  tasks:
-
   - name: Create  sample directory
     file:
       path: "/opt/tomcat/webapps"

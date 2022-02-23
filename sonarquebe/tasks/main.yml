@@ -1,17 +1,4 @@
 ---
-- hosts: sonar-quebe  # need to update the server name as using dynamic inventory
-
-  become: yes
-  become_method: sudo
-  remote_user: ubuntu
-  vars_files:
-    - vars/main.yml
-
-  handlers:
-    - include: handlers/main.yml
-
-
-  tasks:
   - name: Update apt-get repo and cache
     apt: update_cache=yes force_apt_get=yes cache_valid_time=3600
       
