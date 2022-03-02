@@ -52,12 +52,12 @@
       
 
 # download nexus package 
-#  - name: download the nexus packages
-#    unarchive:
-#      src: "{{ nexus_url }}"
-#      dest: "{{ nexus_dir }}"
-#      remote_src: yes
-#      extra_opts: [--strip-components=1]
+  - name: download the nexus packages
+    unarchive:
+      src: "{{ nexus_url }}"
+      dest: "{{ nexus_dir }}"
+      remote_src: yes
+      extra_opts: [--strip-components=1]
   
   - name: uncomment the run as user fron nexus file
     lineinfile:
