@@ -29,39 +29,40 @@
       state: present
 
   - name: install lxml
-    pip3:
-      name: lxml 
+    pip:
+      name: lxml
+      state: present 
 
   - name: add tomcat group
     group:
-      name: tomcat
+      name: "{{ tomcat_group }}"
 
   - name: add tomcat user
     user:
-      name: tomcat
-      group: tomcat
-      home: /user/share/tomcat
+      name: "{{ tomcat_user }}" 
+      group: "{{ tomcat_group }}"
+      home: "{{ tomcat_home_dir }}"
       createhome: no
 
   - name: create /opt/tomcat directory
     file:
-      path: /opt/tomcat
+      path: "{{ tomcat_dir }}"
       state: directory
       mode: 0755
 
 # Download the tomcat packages on remote server 
   - name: download & unarchive
     unarchive:
-      src: http://apache.cs.utah.edu/tomcat/tomcat-9/v9.0.54/bin/apache-tomcat-9.0.54.tar.gz
-      dest: /opt/tomcat
+      src: "{{ tomcat_url }}"
+      dest: "{{ tomcat_dir }}"
       remote_src: yes
       extra_opts: [--strip-components=1]
 
   - name: Change ownership
     file:
-      path: /opt/tomcat
-      owner: tomcat
-      group: tomcat
+      path: "{{ tomcat_dir }}"
+      owner: "{{ tomcat_user }}"
+      group: "{{ tomcat_group }}"
       mode: "u+rwx,g+rx,o=rx"
       recurse: yes
       state: directory
@@ -69,7 +70,7 @@
   - name: Copy Tomcat service from local to remote
     copy:
        src: tomcat.service
-       dest: /etc/systemd/system/
+       dest: "{{ tomcat_service_location }}"
        mode: 0755
 
  

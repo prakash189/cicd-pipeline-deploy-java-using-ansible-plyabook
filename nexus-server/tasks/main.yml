@@ -52,12 +52,12 @@
       
 
 # download nexus package 
-  - name: download the nexus packages
-    unarchive:
-      src: "{{ nexus_url }}"
-      dest: "{{ nexus_dir }}"
-      remote_src: yes
-      extra_opts: [--strip-components=1]
+#  - name: download the nexus packages
+#    unarchive:
+#      src: "{{ nexus_url }}"
+#      dest: "{{ nexus_dir }}"
+#      remote_src: yes
+#      extra_opts: [--strip-components=1]
   
   - name: uncomment the run as user fron nexus file
     lineinfile:
@@ -83,11 +83,22 @@
       recurse: yes
       state: directory
     
-  - name: copy nexus service from local to nexus server
-    copy:
-      src: nexus.service
-      dest: "{{ service_file_location }}"
-      mode: 0755
+  - name: create symbolic links to /etc/init.d/nexus
+    file: 
+      src: /opt/nexus/bin/nexus 
+      dest: /etc/init.d/nexus
+      state: link
+      force: yes
+    
+  - name: configure runlevel links for nexus
+    command: update-rc.d nexus defaults
+
+  - name: start nexus
+    service:
+      name: nexus 
+      state: started 
+      
+    
 
  
 

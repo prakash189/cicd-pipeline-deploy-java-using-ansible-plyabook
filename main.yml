@@ -35,15 +35,3 @@
   roles:
     - role: tomcat
 
-- hosts: tomcat
-  gather_facts: false
-  become: yes
-  become_method: sudo
-  remote_user: ubuntu
-  vars_files:
-    - java-application/vars/main.yml
-  handlers:
-    - include: java-application/handlers/main.yml
-  roles:
-    - role: java-application
-

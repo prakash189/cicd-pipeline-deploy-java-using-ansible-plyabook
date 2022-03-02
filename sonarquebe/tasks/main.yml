@@ -38,8 +38,8 @@
 # Download the sonarqube packages from sonar community 
   - name: download the sonarqube community
     unarchive:
-      src: https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-9.1.0.47736.zip
-      dest: /home/ubuntu/
+      src: "{{ sonarquebe_url }}"
+      dest: "{{ sonarquebe_dir }}"
       remote_src: yes
   
 # copy sonarqube properties file which contains postgresql db details to remote server
@@ -47,15 +47,15 @@
   - name: copy sonarqube properties file to remote system
     copy:
        src: sonar.properties
-       dest: /home/ubuntu/sonarqube-9.1.0.47736/conf
+       dest: "{{ sonarquebe_pro_location }}"
        mode: 0755
 
 
   - name: Change ownership for sonarquebe
     file:
-      path: /home/ubuntu/sonarqube-9.1.0.47736
-      owner: ubuntu
-      group: ubuntu
+      path:  "{{ dir_location }}"
+      owner: "{{ sonarquebe_user }}"
+      group: "{{ sonarquebe_group }}"
       mode: "u+rwx,g+rx,o=rx"
       recurse: yes
       state: directory
@@ -67,13 +67,6 @@
        src: sonar.service
        dest: /etc/systemd/system/
        mode: 0755
-
-  - name: set mex memory to sonarqube
-    command: 'sysctl -w vm.max_map_count=524288'
-
-  - name: set mex file descriptor to sonarqube
-    command: 'sudo sysctl -w fs.file-max=131072'
-
 
 # Install posgtresql on remote server
 

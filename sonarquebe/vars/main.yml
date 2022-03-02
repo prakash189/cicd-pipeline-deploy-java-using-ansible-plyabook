@@ -2,3 +2,9 @@
 db_user: sonar1
 db_name: sonarkube1
 db_password: password1
+sonarquebe_url: https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-9.1.0.47736.zip
+sonarquebe_dir: /home/ubuntu/
+sonarquebe_pro_location: /home/ubuntu/sonarqube-9.1.0.47736/conf
+sonarquebe_user: ubuntu
+sonarquebe_group: ubuntu
+dir_location: /home/ubuntu/sonarqube-9.1.0.47736
