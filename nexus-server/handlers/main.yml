@@ -1,6 +1,6 @@
----
-  - name: start the nexus service
-    systemd:
+---    
+  - name: start nexus service
+    service:
       name: nexus
       state: started
       enabled: true

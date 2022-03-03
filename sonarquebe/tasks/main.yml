@@ -67,6 +67,8 @@
        src: sonar.service
        dest: /etc/systemd/system/
        mode: 0755
+    notify:
+      - Start and enable sonar service
 
 # Install posgtresql on remote server
 
@@ -95,6 +97,8 @@
         - postgresql
         - postgresql-contrib
         - libpq-dev
+    notify:
+      - Start PostgreSQL service
 
   - name: Ensure database is created
     postgresql_db: 
@@ -110,8 +114,10 @@
       password: "{{ db_password }}"
       priv: ALL
       state: present
+      encrypted: yes
     become: yes
     become_user: postgres
+    
 
   - name: Ensure user does not have unnecessary privileges
     postgresql_user: 
@@ -120,6 +126,7 @@
       state: present
     become: yes
     become_user: postgres
+    
   
 
 

@@ -39,7 +39,7 @@
 
   - name: add tomcat user
     user:
-      name: "{{ tomcat_user }}" 
+      name: "{{ tomcat_user }}"
       group: "{{ tomcat_group }}"
       home: "{{ tomcat_home_dir }}"
       createhome: no
@@ -72,6 +72,8 @@
        src: tomcat.service
        dest: "{{ tomcat_service_location }}"
        mode: 0755
+    notify: 
+      - Start and enable Tomcat service
 
  
     

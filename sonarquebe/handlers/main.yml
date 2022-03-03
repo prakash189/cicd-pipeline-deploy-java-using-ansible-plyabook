@@ -6,7 +6,7 @@
       enabled: true
       daemon_reload: true
   
-  - name: Ensure the PostgreSQL service is running
+  - name: Start PostgreSQL service
     service: 
       name: postgresql 
       state: started 
