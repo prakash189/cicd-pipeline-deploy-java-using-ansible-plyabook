@@ -1,6 +1,9 @@
 ---
   - name: update the packages
-    apt: update_cache=yes force_apt_get=yes cache_valid_time=3600
+    apt: 
+      update_cache: yes 
+      force_apt_get: yes 
+      cache_valid_time: 3600
 
   - name: Install the JDK8
     apt:
@@ -35,7 +38,7 @@
     user:
       name: "{{ nexus_user }}"
       group: "{{ nexus_group }}"
-      home: /user/share/nexus
+      home: /usr/share/nexus
       createhome: yes
   
   - name: create nexus directory

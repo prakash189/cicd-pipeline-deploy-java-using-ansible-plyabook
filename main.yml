@@ -11,17 +11,17 @@
   roles:
     - role: nexus-server
 
-- hosts: sonarquebe
+- hosts: sonarqube
   gather_facts: false
   become: yes
   become_method: sudo
   remote_user: ubuntu
   vars_files:
-    - sonarquebe/vars/main.yml
+    - sonarqube/vars/main.yml
   handlers:
-    - include: sonarquebe/handlers/main.yml
+    - include: sonarqube/handlers/main.yml
   roles:
-    - role: sonarquebe
+    - role: sonarqube
   
 - hosts: tomcat
   gather_facts: false
