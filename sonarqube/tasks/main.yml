@@ -80,6 +80,18 @@
       pkg: python3-psycopg2
       state: present
   
+  - name: add the virtual max memory
+    lineinfile:
+      path: /etc/sysctl.conf
+      state: present
+      line: "{{ item }}"
+    with_items:
+    - 'vm.max_map_count=262144'
+    - 'fs.file-max=65536'
+    - 'ulimit -n 65536'
+    - 'ulimit -u 4096'
+
+  
   - name: Ensure bash, OpenSSl, and libssl are the latest versions
     apt:
       name: "{{item}}"
@@ -134,3 +146,4 @@
 
 
   
+
