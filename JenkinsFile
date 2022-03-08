@@ -5,7 +5,7 @@ pipeline {
         stage('checkout') {
             steps {
 
-                git branch: 'main', url: 'https://github.com/prakash189/cicd-pipeline-deploy-java-using-ansible-plyabook.git'
+                git branch: 'master', url: 'https://github.com/prakash189/cicd-pipeline-deploy-java-using-ansible-plyabook.git'
 
                   }
               }
