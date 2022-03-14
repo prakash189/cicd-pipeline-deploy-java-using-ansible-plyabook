@@ -91,7 +91,7 @@ Then final directory structure will be like the below:
     └── vars
         └── main.yml
 ```
-Step 3: Lets create the centralized main.yml file which will contain the information of hosts, username and roles of respective servers.
+Step 3: Lets create the centralized main.yml file which will contains the information of hosts, usernames and roles of respective servers.
 
 #### vi main.yml
 
