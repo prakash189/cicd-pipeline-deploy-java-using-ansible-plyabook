@@ -4,7 +4,9 @@
 ## Pre-requisites
 
  Ubuntu 18.04
-
+ 
+ Installed Jenkins on master server refer the doc [link](https://www.digitalocean.com/community/tutorials/how-to-install-jenkins-on-ubuntu-18-04)
+ 
 ## Implementation Steps
 
 Step 1: We need to do passwordless authentication between the jenkins server and client server so that we should be able to run ansible playbooks without any interruption.
