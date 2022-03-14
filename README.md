@@ -9,11 +9,11 @@
 
 Step 1: We need to do passwordless authentication between the jenkins server and client server so that we should be able to run ansible playbooks without any interruption.
 
-Lets create the authentication SSH-keygen keys on Jenkins server for jenkins user, run the below commands.
+Lets create the authentication SSH-keygen keys on Jenkins server for jenkins user, run the below commands. Replace the aws.pem key with original key with correct path.
 ```
 sudo su jenkins
 ssh-keygen -t rsa
-ssh-copy-id -i /var/lib/jenkins/.ssh/id_rsa.pub ubuntu@192.168.62.130
+cat /var/lib/jenkins/.ssh/id_rsa.pub | ssh -i aws.pem ubuntu@192.168.62.130 "cat >> ~/.ssh/authorized_keys"
 ssh ubuntu@192.168.62.130
 ```
 
