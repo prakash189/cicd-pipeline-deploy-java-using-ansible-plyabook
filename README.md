@@ -41,7 +41,7 @@ It will create the below directory structure for the tomcat.
     └── vars
         └── main.yml
 ```
-Same steps can be follow to create the role for the Sonarqube and Nexus application using ansible galaxy command.
+Same steps can be followed to create the role for the Sonarqube and Nexus application using ansible galaxy command.
 Then final directory structure will be like the below:
 
 ```
