@@ -1,10 +1,23 @@
 
 # Tomcat, Sonarqube and Nexus Deployment using role based ansible playbook
 
+## Pre-requisites
 
-Expects Ubuntu 18.04
+ Ubuntu 18.04
 
-We need to create the role for tomcat, sonarqube and Nexus server using ansible galaxy command, to create the role, run the below command
+## Implementation Steps
+
+Step 1: We need to do passwordless authentication between the jenkins server and client server so that we should be able to run ansible playbooks without any interruption.
+
+Lets create the authentication SSH-keygen keys on Jenkins server for jenkins user, run the below commands.
+```
+sudo su jenkins
+ssh-keygen -t rsa
+ssh-copy-id -i /var/lib/jenkins/.ssh/id_rsa.pub ubuntu@192.168.62.130
+ssh ubuntu@192.168.62.130
+```
+
+Step 2: We need to create the role for tomcat, sonarqube and Nexus server using ansible galaxy command, to create the role, run the below command
 
 ```
 ansible-galaxy init tomcat
@@ -78,9 +91,9 @@ Then final directory structure will be like the below:
     └── vars
         └── main.yml
 ```
-Lets create the centralized main.yml file which will contain the information of hosts, username and roles of respective servers.
+Step 3: Lets create the centralized main.yml file which will contain the information of hosts, username and roles of respective servers.
 
-## vi main.yml
+#### vi main.yml
 
 ```
 ---
@@ -123,7 +136,7 @@ Lets create the centralized main.yml file which will contain the information of 
 ```
 These playbooks deploy implementation of Tomcat Application Server, Sonarqube and Nexus server on respective host server. To use them, first edit the hosts inventory file to contain the hostnames of the servers on which you want deployed applications, add the ansible username(client server user name) and private key path of master server user(In this example, we are using jenkins user to run the anisble playbook) and also edit the group_vars/tomcat-servers file to set any Tomcat configuration parameters you need same you can do for the Sonarqube and Nexus Server.
 
-## vi hosts
+#### vi hosts
 
 ```
 [tomcat]
@@ -139,7 +152,11 @@ These playbooks deploy implementation of Tomcat Application Server, Sonarqube an
 192.168.62.133 ansible_connection=ssh ansible_user=ubuntu ansible_private_key_file=/var/lib/jenkins/.ssh/id_rsa ansible_python_interpreter=/usr/bin/python3
 ```
 
-Then run the playbook, like this:
+
+Step 4: Once main.yml and hosts file ready, we need to edit the tasks/main.yml playbook for the Tomcat, Sonarqube and Nexus Server to install the application on the host server also edit the varibles file such as vars/main.yml and handler file named handlers/main.yml file as per the requirements.
+
+
+Step 5: Once ansible playbook is ready to run, then run the playbook, like this:
 
 ```
 ansible-playbook -i hosts main.yml
