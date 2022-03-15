@@ -39,25 +39,25 @@ pipeline {
           {
             steps
               {
-                  withSonarQubeEnv(installationName: ${Sonarqube_server_name}, credentialsId: 'sonarqube') 
+                  withSonarQubeEnv(installationName: ${Sonarqube_server_name}, credentialsId: 'sonar-creds') 
                    {
                       sh 'mvn clean package sonar:sonar -Dsonar.projectName=${Sonarqube_project_name} -Dsonar.projectKey=${Sonar_project_key}'
                    }
               }
           }
 
-/// quality gate checks ///
+// /// quality gate checks ///
 
-        stage('SQuality Gate') 
-          {
-            steps 
-              {
-                timeout(time: 5, unit: 'MINUTES') 
-                  {
-                     waitForQualityGate abortPipeline: true
-                  }
-              }
-          }
+//         stage('SQuality Gate') 
+//           {
+//             steps 
+//               {
+//                 timeout(time: 5, unit: 'MINUTES') 
+//                   {
+//                      waitForQualityGate abortPipeline: true
+//                   }
+//               }
+//           }
 
         stage('upload the artifacts on nexus') 
           {
@@ -95,5 +95,3 @@ pipeline {
         }
     
     }
-
-
