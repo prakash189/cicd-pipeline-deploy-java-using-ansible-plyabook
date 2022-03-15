@@ -9,7 +9,7 @@
 
   - name: Create  sample directory
     file:
-      path: "/opt/tomcat/webapps"
+      path: "{{ tomcat_dir_path }}"
       state: directory
       mode: 0777
     become: true
@@ -18,25 +18,18 @@
 
   - name:                 Download artifact from nexus server
     maven_artifact:
-      repository_url:     "http://18.138.191.148:8081/repository/java-apps-artifacts/"
-      group_id:           "com.devops4solutions"
-      artifact_id:        "LoginWebApp"
-      version:            "3"
-      extension:          "war"
-      dest:               "/opt/tomcat/webapps"
+      repository_url:     "{{ nexus_repo_url }}"
+      group_id:           "{{ nexus_group_id }}"
+      artifact_id:        "{{ artifacts_id }}"
+      version:            "{{ artifacts_version }}"
+      extension:          "{{ artifacts_extension }}"
+      dest:               "{{ tomcat_dir_path }}"
 
   - name: Change ownership
     file:
-      path: /opt/tomcat/webapps/LoginWebApp-3.war
-      owner: tomcat
-      group: tomcat
+      path: "{{ artifacts_path }}"
+      owner: "{{ tomcat_user }}"
+      group: "{{ tomcat_group }}"
       mode: "u+rwx,g+rx,o=rx"
 
-
-  - name: Start and enable Tomcat service
-    systemd:
-      name: tomcat
-      state: restarted
-      enabled: true
-      daemon_reload: true
 

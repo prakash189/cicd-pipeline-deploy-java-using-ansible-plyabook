@@ -1,0 +1,10 @@
+---
+artifacts_path: /opt/tomcat/webapps/LoginWebApp-3.war
+nexus_repo_url: http://18.138.191.148:8081/repository/java-apps-artifacts/
+nexus_group_id: com.devops4solutions
+artifacts_id: LoginWebApp
+tomcat_dir_path: /opt/tomcat/webapps
+tomcat_user: tomcat
+tomcat_group: tomcat
+artifacts_version: 3
+artifacts_extension: war
