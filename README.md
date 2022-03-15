@@ -1,168 +1,252 @@
+# Building Java Projects with Maven
+This guide walks you through using Maven to build a simple Java project.
 
-# Tomcat, Sonarqube and Nexus Deployment using role based ansible playbook
+## What you’ll build
+You’ll create an application that provides the time of day and then build it with Maven.
 
-## Pre-requisites
+## What you’ll need
++ A favorite text editor or IDE
++ JDK 6 or later
++ Install Maven
 
- Ubuntu 18.04
- 
- Installed Jenkins on master server refer the doc [link](https://www.digitalocean.com/community/tutorials/how-to-install-jenkins-on-ubuntu-18-04)
- 
-## Implementation Steps
+## Install Maven.
++ [Install Maven on Windows](https://www.baeldung.com/install-maven-on-windows-linux-mac#installing-maven-on-windows)
++ [Install Maven on Linux](https://www.baeldung.com/install-maven-on-windows-linux-mac#installing-maven-on-linux)
++ [Install Maven on Mac OSX](https://www.baeldung.com/install-maven-on-windows-linux-mac#installing-maven-on-mac-os-x)
 
-Step 1: We need to do passwordless authentication between the jenkins server and client server so that we should be able to run ansible playbooks without any interruption.
+## Set up the project
+First you’ll need to setup a Java project for Maven to build. To keep the focus on Maven, make the project as simple as possible for now.
 
-Lets create the authentication SSH-keygen keys on Jenkins server for jenkins user, run the below commands. Replace the aws.pem key with original key with correct path.
-```
-sudo su jenkins
-ssh-keygen -t rsa
-cat /var/lib/jenkins/.ssh/id_rsa.pub | ssh -i aws.pem ubuntu@192.168.62.130 "cat >> ~/.ssh/authorized_keys"
-ssh ubuntu@192.168.62.130
-```
-
-Step 2: We need to create the role for tomcat, sonarqube and Nexus server using ansible galaxy command, to create the role, run the below command
-
-```
-ansible-galaxy init tomcat
-```
-It will create the below directory structure for the tomcat.
-
-```
-└── tomcat
-    ├── defaults
-    │   └── main.yml
-    ├── handlers
-    │   └── main.yml
-    ├── meta
-    │   └── main.yml
-    ├── README.md
-    ├── tasks
-    │   ├── main.yml
-    ├── tests
-    │   ├── inventory
-    │   └── test.yml
-    └── vars
-        └── main.yml
-```
-Same steps can be followed to create the role for the Sonarqube and Nexus application using ansible galaxy command.
-Then final directory structure will be like the below:
-
-```
-├── hosts
-├── main.yml
-├── nexus-server
-│   ├── defaults
-│   │   └── main.yml
-│   ├── handlers
-│   │   └── main.yml
-│   ├── meta
-│   │   └── main.yml
-│   ├── tasks
-│   │   ├── main.yml
-│   ├── tests
-│   │   ├── inventory
-│   │   └── test.yml
-│   └── vars
-│       └── main.yml
-├── sonarqube
-│   ├── defaults
-│   │   └── main.yml
-│   ├── handlers
-│   │   └── main.yml
-│   ├── meta
-│   │   └── main.yml
-│   ├── tasks
-│   │   ├── main.yml
-│   ├── tests
-│   │   ├── inventory
-│   │   └── test.yml
-│   └── vars
-│       └── main.yml
-└── tomcat
-    ├── defaults
-    │   └── main.yml
-    ├── handlers
-    │   └── main.yml
-    ├── meta
-    │   └── main.yml
-    ├── README.md
-    ├── tasks
-    │   ├── main.yml
-    ├── tests
-    │   ├── inventory
-    │   └── test.yml
-    └── vars
-        └── main.yml
-```
-Step 3: Lets create the centralized main.yml file which will contains the information of hosts, usernames and roles of respective servers.
-
-#### vi main.yml
-
-```
+#### Create the directory structure
 ---
-- hosts: nexus
-  gather_facts: false
-  become: yes
-  become_method: sudo
-  remote_user: ubuntu
-  vars_files:
-    - nexus-server/vars/main.yml
-  handlers:
-    - include: nexus-server/handlers/main.yml
-  roles:
-    - role: nexus-server
++ Create a root project directory named `HelloWorldMaven` and `cd HelloWorldMaven`.
++ In a project directory of your choosing, create the following subdirectory structure.
++ For example, with `mkdir -p src/main/java/hello` on *nix systems:*
 
-- hosts: sonarqube
-  gather_facts: false
-  become: yes
-  become_method: sudo
-  remote_user: ubuntu
-  vars_files:
-    - sonarqube/vars/main.yml
-  handlers:
-    - include: sonarqube/handlers/main.yml
-  roles:
-    - role: sonarqube
-  
-- hosts: tomcat
-  gather_facts: false
-  become: yes
-  become_method: sudo
-  remote_user: ubuntu
-  vars_files:
-    - tomcat/vars/main.yml
-  handlers:
-    - include: tomcat/handlers/main.yml
-  roles:
-    - role: tomcat
++ on Windows you can create this directory manually.
 
-```
-These playbooks deploy implementation of Tomcat Application Server, Sonarqube and Nexus server on respective host server. To use them, first edit the hosts inventory file to contain the hostnames of the servers on which you want deployed applications, add the ansible username(client server user name) and private key path of master server user(In this example, we are using jenkins user to run the anisble playbook) and also edit the group_vars/tomcat-servers file to set any Tomcat configuration parameters you need same you can do for the Sonarqube and Nexus Server.
+    ```
+    └── src
+        └── main
+            └── java
+                └── hello
+    ```
++ Within the `src/main/java/hello` directory, you can create any Java classes you want. To maintain consistency with the rest of this guide, create these two classes: `HelloWorld.java` and `Greeter.java`.
 
-#### vi hosts
++ `src/main/java/hello/HelloWorld.java`
+  ```
+  package hello;
+  public class HelloWorld {
+      public static void main(String[] args) {
+          Greeter greeter = new Greeter();
+          System.out.println(greeter.sayHello());
+      }
+  }
+  ```
 
-```
-[tomcat]
+ + `src/main/java/hello/Greeter.java`
+    ```
+    package hello;
+    public class Greeter {
+        public String sayHello() {
+            return "Hello world!";
+        }
+    }
+    ```
 
-192.168.62.131 ansible_connection=ssh ansible_user=ubuntu ansible_private_key_file=/var/lib/jenkins/.ssh/id_rsa ansible_python_interpreter=/usr/bin/python3
+Now that you have a project that is ready to be built with Maven, the next step is to build this project with Maven.
 
-[sonarqube]
+### Define a simple Maven build
+---
++ You need to create a Maven project definition.
++ Maven projects are defined with an XML file named pom.xml.
++ Among other things, this file gives the project’s name, version, and dependencies that it has on external libraries.
++ Create a file named `pom.xml` at the root of the project and give it the following contents:
 
-192.168.62.132 ansible_connection=ssh ansible_user=ubuntu ansible_private_key_file=/var/lib/jenkins/.ssh/id_rsa ansible_sudo_pass=admin ansible_python_interpreter=/usr/bin/python3
-
-[nexus]
-
-192.168.62.133 ansible_connection=ssh ansible_user=ubuntu ansible_private_key_file=/var/lib/jenkins/.ssh/id_rsa ansible_python_interpreter=/usr/bin/python3
-```
-
-
-Step 4: Once main.yml and hosts file ready, we need to edit the tasks/main.yml playbook for the Tomcat, Sonarqube and Nexus Server to install the application on the host server also edit the varibles file such as vars/main.yml and handler file named handlers/main.yml file as per the requirements.
-
-
-Step 5: Once ansible playbook is ready to run, then run the playbook, like this:
+ `pom.xml`
 
 ```
-ansible-playbook -i hosts main.yml
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.springframework</groupId>
+    <artifactId>jb-hello-world-maven</artifactId>
+    <packaging>jar</packaging>
+    <version>0.1.0</version>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>2.1</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <transformers>
+                                <transformer
+                                    implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>hello.HelloWorld</mainClass>
+                                </transformer>
+                            </transformers>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
+```
+With the exception of the optional `<packaging>` element, this is the simplest possible `pom.xml` file necessary to build a Java project. It includes the following details of the project configuration:
++ `<modelVersion>`. POM model version (always 4.0.0).
++ `<groupId>`. Group or organization that the project belongs to. Often expressed as an inverted domain name.
++ `<artifactId>`. Name to be given to the project’s library artifact (for example, the name of its JAR or WAR file).
++ `<version>`. Version of the project that is being built.
++ `<packaging>` - How the project should be packaged. Defaults to "jar" for JAR file packaging. Use "war" for WAR file packaging.
+
+### Build Java code
+---
+Maven is now ready to build the project. You can execute several build lifecycle goals with Maven now, including goals to compile the project’s code, create a library package (such as a JAR file), and install the library in the local Maven dependency repository.
+
+To try out the build, issue the following at the command line:
+
+  `mvn compile`
+  + This will run Maven, telling it to execute the compile goal. When it’s finished, you should find the compiled .class files in the target/classes directory.
+  + Since it’s unlikely that you’ll want to distribute or work with .class files directly, you’ll probably want to run the package goal instead:
+
+`mvn package`
+
+  + The package goal will compile your Java code, run any tests, and finish by packaging the code up in a JAR file within the target directory. The name of the JAR file will be based on the project’s `<artifactId>` and `<version>`. For example, given the minimal `pom.xml` file from before, the JAR file will be named gs-maven-0.1.0.jar.
+
+    **Note:**  If you’ve changed the value of <packaging> from "jar" to "war", the result will be a WAR file within the target directory instead of a JAR file.
+
+Maven also maintains a repository of dependencies on your local machine (usually in a .m2/repository directory in your home directory) for quick access to project dependencies. If you’d like to install your project’s JAR file to that local repository, then you should invoke the install goal:
+
+`mvn install`
+
+The install goal will compile, test, and package your project’s code and then copy it into the local dependency repository, ready for another project to reference it as a dependency.
+
+Speaking of dependencies, now it’s time to declare dependencies in the Maven build.
+
+### Declare Dependencies
+---
+
+The simple Hello World sample is completely self-contained and does not depend on any additional libraries. Most applications, however, depend on external libraries to handle common and complex functionality.
+
+For example, suppose that in addition to saying "Hello World!", you want the application to print the current date and time. While you could use the date and time facilities in the native Java libraries, you can make things more interesting by using the Joda Time libraries.
+
+First, change HelloWorld.java to look like this:
+
+`src/main/java/hello/HelloWorld.java`
+
+```
+package hello;
+
+import org.joda.time.LocalTime;
+
+public class HelloWorld {
+    public static void main(String[] args) {
+		LocalTime currentTime = new LocalTime();
+		System.out.println("The current local time is: " + currentTime);
+		Greeter greeter = new Greeter();
+		System.out.println(greeter.sayHello());
+	}
+}
+```
+Here `HelloWorld` uses Joda Time’s `LocalTime` class to get and print the current time.
+
+If you were to run `mvn compile` to build the project now, the build would fail because you’ve not declared Joda Time as a compile dependency in the build. You can fix that by adding the following lines to `pom.xml` (within the `<project>` element):
+
+```
+<properties>
+    <java.version>1.8</java.version>
+</properties>
+
+<dependencies>
+    <dependency>
+        <groupId>joda-time</groupId>
+        <artifactId>joda-time</artifactId>
+        <version>2.2</version>
+    </dependency>
+</dependencies>
+```
+This block of XML declares a list of dependencies for the project. Specifically, it declares a single dependency for the Joda Time library. Within the `<dependency>` element, the dependency coordinates are defined by three sub-elements:
+
++ `<groupId>` - The group or organization that the dependency belongs to.
++ `<artifactId>` - The library that is required.
++ `<version>` - The specific version of the library that is required.
+
+By default, all dependencies are scoped as `compile` dependencies. That is, they should be available at compile-time (and if you were building a WAR file, including in the /WEB-INF/libs folder of the WAR). Additionally, you may specify a `<scope>` element to specify one of the following scopes:
+
++ `provided` - Dependencies that are required for compiling the project code, but that will be provided at runtime by a container running the code (e.g., the Java Servlet API).
+
++ `test` - Dependencies that are used for compiling and running tests, but not required for building or running the project’s runtime code.
+
+Now if you run `mvn compile` or `mvn package`, Maven should resolve the Joda Time dependency from the Maven Central repository and the build will be successful.
+
+Here’s the completed `pom.xml` file:
+
+`pom.xml`
+
+```
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.springframework</groupId>
+    <artifactId>hello-world-maven</artifactId>
+    <packaging>jar</packaging>
+    <version>0.1.0</version>
+
+    <!-- tag::joda[] -->
+    <properties>
+        <java.version>1.8</java.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version>2.2</version>
+        </dependency>
+    </dependencies>
+    <!-- end::joda[] -->
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>2.1</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <transformers>
+                                <transformer
+                                    implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>hello.HelloWorld</mainClass>
+                                </transformer>
+                            </transformers>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
 ```
 
-When the playbook run completes, you should be able to see the Tomcat Application Server running on the ports you chose, on the target machines also sonarqube and Nexus Server on respective hosts.
+### Run project
+---
++ To run this project run the following command.
 
+    `java -cp target/jb-hello-world-maven-0.1.0.jar hello.HelloWorld`

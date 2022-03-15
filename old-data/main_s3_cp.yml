@@ -1,0 +1,15 @@
+- hosts: all
+
+  become: yes
+  become_method: sudo
+  remote_user: ubuntu
+  vars:
+   ansible_python_interpreter: /usr/bin/python3
+  tasks:
+  - name: upload to s3
+    aws_s3:
+      bucket: "publish-artifacts-java"
+      object: "/target/LoginWebApp-1.war"
+      src: "/var/lib/jenkins/workspace/java-application-pipeline/target/LoginWebApp-1.war
+      "
+      mode: put
