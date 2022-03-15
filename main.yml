@@ -22,10 +22,10 @@
 
   - name:                 Download artifact from nexus server
     maven_artifact:
-      repository_url:     "{{ nexus_repo_url }}"
-      group_id:           "{{ nexus_group_id }}"
-      artifact_id:        "{{ artifacts_id }}"
-      version:            "{{ artifacts_version }}"
+      repository_url:     "http://192.168.62.131:8081/repository/java-apps-artifacts/"
+      group_id:           "com.devops4solutions"
+      artifact_id:        "LoginWebApp"
+      version:            "3"
       extension:          "war"
       dest:               "{{ tomcat_dir_path }}"
 
