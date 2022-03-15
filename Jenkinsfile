@@ -39,9 +39,9 @@ pipeline {
           {
             steps
               {
-                  withSonarQubeEnv(installationName: ${Sonarqube_server_name}, credentialsId: 'sonar-creds') 
+                  withSonarQubeEnv(installationName: '${Sonarqube_server_name}', credentialsId: 'sonar-creds') 
                    {
-                      sh 'mvn clean package sonar:sonar -Dsonar.projectName=${Sonarqube_project_name} -Dsonar.projectKey=${Sonar_project_key}'
+                      sh 'mvn clean package sonar:sonar -Dsonar.projectName="${Sonarqube_project_name}" -Dsonar.projectKey="${Sonar_project_key}"'
                    }
               }
           }
@@ -68,16 +68,16 @@ pipeline {
                     [
                       artifactId: 'LoginWebApp', 
                       classifier: '', 
-                      file: ${Artifacts_path}, 
+                      file: '${Artifacts_path}', 
                       type: 'war'
                     ]
 
                   ], 
                       credentialsId: 'nexus-cred', 
-                      groupId: 'com.devops4solutions', nexusUrl: ${Nexus_server_url}, 
+                      groupId: 'com.devops4solutions', nexusUrl: '${Nexus_server_url}', 
                       nexusVersion: 'nexus3', 
                       protocol: 'http', 
-                      repository: ${Nexus_repo_url}, 
+                      repository: '${Nexus_repo_url}', 
                       version: "3"
               }
           }
