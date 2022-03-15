@@ -35,5 +35,7 @@
       owner: "{{ tomcat_user }}"
       group: "{{ tomcat_group }}"
       mode: "u+rwx,g+rx,o=rx"
+    notify: 
+      - Restart Tomcat service
 
 
