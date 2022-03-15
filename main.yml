@@ -26,7 +26,7 @@
       group_id:           "{{ nexus_group_id }}"
       artifact_id:        "{{ artifacts_id }}"
       version:            "{{ artifacts_version }}"
-      extension:          "{{ artifacts_extension }}"
+      extension:          "war"
       dest:               "{{ tomcat_dir_path }}"
 
   - name: Change ownership
