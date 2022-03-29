@@ -46,18 +46,18 @@ pipeline {
               }
           }
 
-// /// quality gate checks ///
+ /// quality gate checks ///
 
-//         stage('SQuality Gate') 
-//           {
-//             steps 
-//               {
-//                 timeout(time: 5, unit: 'MINUTES') 
-//                   {
-//                      waitForQualityGate abortPipeline: true
-//                   }
-//               }
-//           }
+         stage('SQuality Gate') 
+          {
+             steps 
+               {
+                 timeout(time: 5, unit: 'MINUTES') 
+                   {
+                      waitForQualityGate abortPipeline: true
+                   }
+               }
+           }
 
         stage('upload the artifacts on nexus') 
           {
